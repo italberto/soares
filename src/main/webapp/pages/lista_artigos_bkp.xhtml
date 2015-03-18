@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/principal.xhtml">
+
+            <ui:define name="content" >
+                <p:panel rendered="#{estudoBean.revisoes.size() gt 0}">
+                    <h:form id="form_escolha_revisao">
+
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="revisao" value="Escolha da Revisão"/>
+                            <p:selectOneMenu value="#{estudoBean.revisaoId}" id="revisao">
+                                <f:selectItem itemLabel="Selecione um" itemValue=""/>
+                                <f:selectItems value="#{estudoBean.revisoes}" var="revisao" itemValue="#{revisao.id}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton actionListener="#{estudoBean.escolherRevisao}" 
+                                         update=":form:table" 
+                                         ajax="true"
+                                         value="Escolher"/>
+                        <br></br>
+                    </h:form>
+
+                    <h:form id="form">
+
+                        <p:growl id="messages" showDetail="true" />
+
+                        <p:dataTable var="estudo" value="#{estudoBean.estudos}" rows="20"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,50,100,200,500,1000"
+                                     emptyMessage="Nenhum registro encontrado"
+                                     editable="true"
+                                     draggableColumns="true"
+                                     draggableRows="true"
+                                     id="table">
+
+                            <f:facet name="header">
+                                Lista de Estudos
+
+                                <p:commandButton id="toggler" type="button" value="Columns" style="float:right" icon="ui-icon-calculator" />
+                                <p:columnToggler datasource="table" trigger="toggler" />
+                            </f:facet>
+
+                            <p:ajax event="rowEdit" listener="#{estudoBean.onEdit}" update=":form:messages" />
+                            <p:ajax event="rowEditCancel" listener="#{estudoBean.onCancel}" update=":form:messages" />
+
+                            <p:column headerText="Id" sortBy="#{estudo.id}" style="text-align: center;">
+                                <h:inputText value="#{estudo.id}" id="idEstudo" size="5" style="border: none; background-color: none;"/>
+                            </p:column>
+
+                            <p:column headerText="Título" sortBy="#{estudo.titulo}">
+                                <h:outputText value="#{estudo.titulo}"/>
+                            </p:column>
+
+                            <p:column headerText="Autor">
+                                <p:dataList value="#{estudo.autores}" var="autor">
+                                    #{autor.ultimoNome}, #{autor.primeiroNome}
+                                </p:dataList>
+                            </p:column>
+
+                            <p:column headerText="Abstract">
+
+                                <h:outputText value="#{estudo.abstractReduzido}"/>
+                                <br></br>    
+                                <p:commandLink onclick="PF('IS#{estudo.id}').show();">
+                                    <h:outputText value=" Ler abstract..." style="text-align: center;"/>
+                                </p:commandLink>
+
+                                <p:dialog header="Informçaões do Estudo" widgetVar="IS#{estudo.id}" 
+                                          height="30%" width="50%" draggable="true"
+                                          resizable="true">
+                                    <b><h:outputText value="ES#{estudo.id}: #{estudo.titulo}" /></b><br />
+                                    <br></br>
+                                    <h:outputText value="#{estudo.abstractText}" />
+                                    <br></br>
+                                    <hr></hr>
+                                    <h:outputLink rel="#{estudo.doi}">
+                                        <h:outputText value="#{estudo.doi}"/>
+                                    </h:outputLink>
+                                </p:dialog>
+                            </p:column>
+
+
+
+                            <p:columns value="#{estudoBean.etapas}" var="etapa" columnIndexVar="colIndex">
+                                <f:facet name="header">
+                                    <h:outputText value="#{etapa.titulo}"/>
+                                </f:facet>
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{estudo.criterio}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectOneMenu 
+                                            value="#{estudoBean.criterioId}" 
+                                            style="width:125px">
+                                            <f:selectItem itemLabel="" itemValue="" />
+
+                                            <f:selectItems id="item_#{colIndex}" 
+                                                           value="#{etapa.criterios}" 
+                                                           var="criterio" 
+                                                           itemLabel="#{criterio.titulo}" 
+                                                           itemValue="#{criterio.id}"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                                <p:rowEditor/>
+                            </p:columns>
+
+
+
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

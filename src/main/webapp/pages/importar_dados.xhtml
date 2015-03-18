@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../templates/principal.xhtml">
+
+
+            <ui:define name="content">
+                <p:panel rendered="#{IO.engines.size() gt 0}">
+                    <p:fieldset legend="Adicionar arquivo">
+                        <h:form enctype="multipart/form-data">
+
+                            <p:panelGrid columns="2">
+
+                                <h:outputLabel for="engine" value="Engine"/>
+                                <h:selectOneMenu value="#{IO.engineId}" required="true" requiredMessage="É necessário informar um estudo">
+                                    <f:selectItem itemValue="" itemLabel="Escolha um"/>
+                                    <f:selectItems value="#{IO.engines}" var="engine" itemValue="#{engine.id}" itemLabel="#{engine.nome}"/> 
+                                </h:selectOneMenu>    
+
+                                <p:outputLabel for="data" value="Dada da Exportção:" />
+                                <p:calendar id="data" value="#{IO.dataExportacao}" showOn="button" />
+
+                                <h:outputLabel for="arquivo" value="Arquivo: "/>
+                                <p:fileUpload id="arquivo" mode="simple" value="#{IO.file}" required="true" requiredMessage="O arquivo é essencial."/>
+
+                            </p:panelGrid>
+
+                            <p:commandButton value="Enviar" 
+                                             actionListener="#{IO.upload}" 
+                                             ajax="false" 
+                                             icon="fa-life-saver" 
+                                             update=":formx:tabelaPrincipal"/>
+                        </h:form>
+                    </p:fieldset>
+                    <p:panel>
+                        <h:form id="formx">
+                            <p:dataTable value="#{IO.arquivos}" var="arquivo"
+                                         emptyMessage="Nenhum registro encontrado"
+                                         style="text-align: center;"
+                                         id="tabelaPrincipal">
+                                <f:facet name="header">
+                                    Lista de Arquivos
+                                </f:facet>
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{arquivo.id}"/>
+                                </p:column>
+                                <p:column headerText="Descrição">
+                                    <h:outputText value="#{arquivo.descricao}"/>
+                                </p:column>
+                                <p:column headerText="Conteúdo">
+                                    <h:outputText value="#{arquivo.conteudo}"/>
+                                </p:column>
+                                <p:column headerText="Tipo">
+                                    <h:outputText value="#{arquivo.tipo}"/>
+                                </p:column>
+                                <p:column headerText="Tamanho em KB">
+                                    <h:outputText value="#{arquivo.tamanho}"/>
+                                </p:column>
+                                <p:column headerText="Data de exportação">
+                                    <h:outputText value="#{arquivo.dataExportacao}"/>
+                                </p:column>
+                                <p:column headerText="Aquivo Processado">
+                                    <c:choose>
+                                        <c:when test="#{arquivo.processado == true}">
+                                            <h:outputText value="Não Processado"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <h:outputText value="Processado"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p:column>
+                                <p:column headerText="Opções">
+
+                                    <h:outputText value="O arquivo já foi processado e não pode mais ser excluído." rendered="#{arquivo.processado}"/>
+
+                                    <p:commandButton value="Excluir" 
+                                                     actionListener="#{IO.excluir(arquivo)}" 
+                                                     icon="fa-toggle-on"
+                                                     ajax="true"
+                                                     update=":formx:tabelaPrincipal"
+                                                     rendered="#{!arquivo.processado}">
+
+                                    </p:commandButton> 
+
+
+                                    <p:commandButton value="Proc" 
+                                                     actionListener="#{IO.processar(arquivo)}" 
+                                                     icon="fa-gear" ajax="true" 
+                                                     rendered="#{!arquivo.processado}"
+                                                     update=":formx:tabelaPrincipal">
+
+                                    </p:commandButton>
+
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>
+                </p:panel>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

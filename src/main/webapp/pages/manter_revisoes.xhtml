@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../templates/principal.xhtml">
+
+
+            <ui:define name="content">
+                <p:panel>
+                    <h:form id="form_cadastro" >
+                        <p:dialog header="Cadastro" widgetVar="dialogoCadastro" modal="false" id="cadastro">
+                            <p:panelGrid id="painelCadastro" columns="2">
+                                <h:outputLabel for="nome" value="Nome"/>
+                                <p:inputText id="nome" value="#{revisaoBean.revisao.nome}" required="true"/>
+
+
+                                <h:outputLabel for="descricao" value="Descrição"/>
+                                <p:inputText id="descricao" value="#{revisaoBean.revisao.descricao}" size="170" required="true"/>
+
+                                <h:outputLabel for="questao" value="Questão de pesquisa"/>
+                                <p:inputTextarea id="questao" value="#{revisaoBean.revisao.questao}" cols="150" rows="10" required="true"/>
+
+                            </p:panelGrid>
+                            <p:commandButton value="Salvar" actionListener="#{revisaoBean.salvarRevisao}" 
+                                             update=":formx:tabela_principal"
+                                             oncomplete="PF('dialogoCadastro').hide()"
+                                             ajax="true"/>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="form_altracao" >
+                        <p:dialog header="Alterar" widgetVar="dialogoAlteracao" modal="false" id="alteracao">
+                            <p:panelGrid id="painelAlteracao" columns="2">
+                                <h:outputLabel for="nome" value="Nome"/>
+                                <p:inputText id="nome" value="#{revisaoBean.revisao.nome}" required="true"/>
+
+
+                                <h:outputLabel for="descricao" value="Descrição"/>
+                                <p:inputText id="descricao" value="#{revisaoBean.revisao.descricao}" size="170" required="true"/>
+
+
+                                <h:outputLabel for="questao" value="Questão de pesquisa"/>
+                                <p:inputTextarea id="questao" value="#{revisaoBean.revisao.questao}" cols="150" rows="10" required="true"/>
+
+                            </p:panelGrid>
+                            <p:commandButton value="Salvar" actionListener="#{revisaoBean.atualizarRevisao()}" 
+                                             update=":formx:tabela_principal"
+                                             oncomplete="PF('dialogoAlteracao').hide()"
+                                             ajax="true"/>
+                        </p:dialog>
+                    </h:form>
+
+
+                    <h:form id="form_novo" >
+                        <p:commandButton value="Criar Nova Revisão" actionListener="#{revisaoBean.criarRevisao}" 
+                                         oncomplete="PF('dialogoCadastro').show()"/>
+                    </h:form>
+
+                    <p:panel>
+                        <h:form id="formx">
+                            <p:dataTable value="#{revisaoBean.revisoes}" var="revisao"
+                                         emptyMessage="Nenhum registro encontrado"
+                                         style="text-align: center;"
+                                         id="tabela_principal">
+                                <f:facet name="header">
+                                    Revisões Disponíveis
+                                </f:facet>
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{revisao.id}"/>
+                                </p:column>
+                                <p:column headerText="Título">
+                                    <h:outputText value="#{revisao.nome}"/>
+                                </p:column>
+                                <p:column headerText="Descrição">
+                                    <h:outputText value="#{revisao.descricao}"/>
+                                </p:column>
+                                <p:column headerText="Opções">
+
+                                    <p:commandLink value="Editar " 
+                                                   update=":form_altracao:alteracao"
+                                                   oncomplete="PF('dialogoAlteracao').show()"
+                                                   immediate="true"
+                                                   ajax="true">
+                                        <f:setPropertyActionListener target="#{revisaoBean.revisao}" value="#{revisao}"/>
+                                    </p:commandLink> 
+
+
+                                    <p:commandLink value=" Excluir" 
+                                                   actionListener="#{revisaoBean.excluirRevisao(revisao)}" 
+                                                   update=":formx:tabelaPrincipal"
+                                                   immediate="true"
+                                                   ajax="false">
+                                        <p:confirm header="Confirmação" message="Tem certeza?" icon="ui-icon-alert" />
+                                    </p:commandLink> 
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

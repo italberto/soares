@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <title>SOARES - Software de Apoio a Revisões Sistemáticas</title>
+    </h:head>
+
+    <h:body>
+
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north">
+                <ui:insert name="top">
+                    <h2>SOARES</h2>
+                    <h3>Software de Apoio a Revisões Sistemáticas</h3>
+                </ui:insert>
+            </p:layoutUnit>
+            <p:layoutUnit position="west">            
+                <ui:insert name="left">
+                    <h:form>
+                        <p:panelMenu>
+                            <p:submenu label="Seleção de Estudos" icon="fa-binoculars">
+                                <p:menuitem value="Selecionar Estudos" 
+                                            action="lista_artigos" 
+                                            icon="fa-th-list" 
+                                            ajax="false" />
+                                <p:menuitem value="Estudos Excluídos" 
+                                            action="lista_artigos_escluidos" 
+                                            icon="fa-trash-o" 
+                                            ajax="false"/>
+                            </p:submenu>
+                            <p:submenu label="Estatísticas" icon="fa-bar-chart-o">
+
+                                <p:menuitem value="Tag Cloud" action="tag_cloud" 
+                                            icon="" ajax="false"/>
+
+                                <p:menuitem value="Gráficos" action="#{graficosBean.exibir}" 
+                                            icon="fa-pie-chart" ajax="false"/>
+
+                                <p:menuitem value="Tabelas Estatísticas" action="tabelas" 
+                                            icon="fa-pie-chart" ajax="false"/>
+                            </p:submenu>
+                            <p:submenu label="I/O" icon="fa-bar-chart-o">
+                                <p:menuitem value="Importar Dados" action="importar_dados" 
+                                            icon="" ajax="false"/>
+
+                            </p:submenu>
+                            <p:submenu label="Administração" icon="fa-bar-chart-o">
+                                <p:menuitem value="Gerenciar Revisões" action="manter_revisoes" 
+                                            icon="" ajax="false"/>
+                                <p:menuitem value="Gerenciar Engines" action="manter_engines" 
+                                            icon="" ajax="false"/>
+                                <p:menuitem value="Gerenciar Etapas" action="manter_etapas" 
+                                            icon="" ajax="false"/>
+                                <p:menuitem value="Gerenciar Critérios" action="manter_criterios" 
+                                            icon="" ajax="false"/>
+
+                            </p:submenu>
+                        </p:panelMenu>
+
+                    </h:form>
+                </ui:insert>
+            </p:layoutUnit>
+            <p:layoutUnit position="center">
+                <p:messages id="messages" closable="true" showIcon="true"/>
+                <ui:insert name="content">
+
+                </ui:insert>
+            </p:layoutUnit>
+
+
+        </p:layout>
+    </h:body>
+
+</html>

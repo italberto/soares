@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../templates/principal.xhtml">
+            <ui:define name="content">
+                <p:panel rendered="#{revisaoBean.revisoes.size() gt 0}">
+                    <h:form id="form_cadastro" >
+                        <p:dialog header="Cadastro" widgetVar="dialogoCadastro" modal="false" id="cadastro">
+                            <p:panelGrid id="painelCadastro" columns="2">
+                                <h:outputLabel for="revisao" value="Revisão"/>
+                                <h:selectOneMenu value="#{etapaBean.revisaoId}" required="true">
+                                    <f:selectItem itemValue="" itemLabel="Escolha um"/>
+                                    <f:selectItems value="#{etapaBean.revisoes}" var="revisao" itemValue="#{revisao.id}"/> 
+                                </h:selectOneMenu>
+
+                                <h:outputLabel for="codigo" value="Código"/>
+                                <p:inputText id="codigo" value="#{etapaBean.etapa.codigo}" required="true"/>
+
+                                <h:outputLabel for="titulo" value="Título"/>
+                                <p:inputText id="titulo" value="#{etapaBean.etapa.titulo}" required="true"/>
+
+
+                                <h:outputLabel for="descricao" value="Descrição"/>
+                                <p:inputText id="descricao" value="#{etapaBean.etapa.descricao}" size="170" required="true"/>
+
+
+                            </p:panelGrid>
+                            <p:commandButton value="Salvar" actionListener="#{etapaBean.salvarEtapa}" 
+                                             update=":formx:tabela_principal"
+                                             oncomplete="PF('dialogoCadastro').hide()"
+                                             ajax="true"/>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="form_altracao" >
+                        <p:dialog header="Alterar" widgetVar="dialogoAlteracao" modal="false" id="alteracao">
+                            <p:panelGrid id="painelAlteracao" columns="2">
+                                <h:outputLabel for="revisao" value="Revisão"/>
+                                <h:selectOneMenu value="#{etapaBean.revisaoId}" required="true">
+                                    <f:selectItem itemValue="" itemLabel="Escolha um"/>
+                                    <f:selectItems value="#{etapaBean.revisoes}" var="revisao" itemValue="#{revisao.id}"/> 
+                                </h:selectOneMenu>
+
+                                <h:outputLabel for="codigo" value="Código"/>
+                                <p:inputText id="codigo" value="#{etapaBean.etapa.codigo}" required="true"/>
+
+                                <h:outputLabel for="titulo" value="Título"/>
+                                <p:inputText id="titulo" value="#{etapaBean.etapa.titulo}" required="true"/>
+
+
+                                <h:outputLabel for="descricao" value="Descrição"/>
+                                <p:inputText id="descricao" value="#{etapaBean.etapa.descricao}" size="170" required="true"/>
+
+
+                            </p:panelGrid>
+                            <p:commandButton value="Salvar" actionListener="#{etapaBean.atualizarEtapa()}" 
+                                             update=":formx:tabela_principal"
+                                             oncomplete="PF('dialogoAlteracao').hide()"
+                                             ajax="true"/>
+                        </p:dialog>
+                    </h:form>
+
+
+                    <h:form id="form_novo" >
+                        <p:commandButton value="Criar Nova Etapa" actionListener="#{etapaBean.criarEtapa}" 
+                                         oncomplete="PF('dialogoCadastro').show()"/>
+                    </h:form>
+
+                    <p:panel>
+                        <h:form id="formx">
+                            <p:dataTable value="#{etapaBean.etapas}" var="etapa"
+                                         emptyMessage="Nenhum registro encontrado"
+                                         style="text-align: center;"
+                                         id="tabela_principal">
+                                <f:facet name="header">
+                                    Etapas Disponíveis
+                                </f:facet>
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{etapa.id}"/>
+                                </p:column>
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{etapa.codigo}"/>
+                                </p:column>
+                                <p:column headerText="Título">
+                                    <h:outputText value="#{etapa.titulo}"/>
+                                </p:column>
+                                <p:column headerText="Descrição">
+                                    <h:outputText value="#{etapa.descricao}"/>
+                                </p:column>
+                                <p:column headerText="Opções">
+
+                                    <p:commandLink value="Editar " 
+                                                   update=":form_altracao:alteracao"
+                                                   oncomplete="PF('dialogoAlteracao').show()"
+                                                   immediate="true"
+                                                   ajax="true">
+                                        <f:setPropertyActionListener target="#{etapaBean.etapa}" value="#{etapa}"/>
+                                    </p:commandLink> 
+
+
+                                    <p:commandLink value=" Excluir" 
+                                                   actionListener="#{etapaBean.excluirEtapa(etapa)}" 
+                                                   update=":formx:tabelaPrincipal"
+                                                   immediate="true"
+                                                   ajax="false">
+                                        <p:confirm header="Confirmação" message="Tem certeza?" icon="ui-icon-alert" />
+                                    </p:commandLink> 
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

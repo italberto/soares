@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/principal.xhtml">
+
+            <ui:define name="content" >
+                <p:panel rendered="#{estudoBean.revisoes.size() gt 0}">
+
+                    <h:form id="form_avaliacao" >
+                        <p:dialog header="Avaliar Estudo" widgetVar="dialogoAvaliacao" modal="false" id="avaliacao">
+                            <p:panelGrid id="painelAvaliacao" columns="2">
+
+                                <h:outputLabel for="criterio" value="Escolher critério:"/>    
+                                <p:selectOneMenu id="criterio" value="#{estudoBean.criterioId}">
+                                    <f:selectItem itemLabel="Selecione Um" itemValue=""/>
+                                    <f:selectItems value="#{estudoBean.criterios}"/>
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+                            <p:commandButton value="Salvar" actionListener="#{estudoBean.avaliarEstudo}" 
+                                             update=":form:tabela_principal"
+                                             oncomplete="PF('dialogoAvaliacao').hide()"
+                                             ajax="true"/>
+                        </p:dialog>
+                    </h:form>
+
+                    <h:form id="form_escolha_revisao">
+
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="revisao" value="Escolha da Revisão"/>
+                            <p:selectOneMenu value="#{estudoBean.revisaoId}" id="revisao">
+                                <f:selectItem itemLabel="Selecione um" itemValue=""/>
+                                <f:selectItems value="#{estudoBean.revisoes}" var="revisao" itemValue="#{revisao.id}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton actionListener="#{estudoBean.escolherRevisao}" 
+                                         update=":form:tabela_principal" 
+                                         ajax="true"
+                                         value="Escolher"/>
+                        <br></br>
+                    </h:form>
+
+                    <h:form id="form">
+
+                        <p:growl id="messages" showDetail="true" />
+
+                        <p:dataTable var="estudo" value="#{estudoBean.estudos}" rows="20"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,50,100,200,500,1000"
+                                     emptyMessage="Nenhum registro encontrado"
+                                     editable="true"
+                                     draggableColumns="true"
+                                     draggableRows="true"
+                                     id="tabela_principal">
+
+                            <f:facet name="header">
+                                Lista de Estudos
+                                <p:commandButton id="toggler" type="button" value="Columns" style="float:right" icon="ui-icon-calculator" />
+                                <p:columnToggler datasource="tabela_principal" trigger="toggler" />
+                            </f:facet>
+
+                            <p:ajax event="rowEdit" listener="#{estudoBean.onEdit}" update=":form:messages" />
+                            <p:ajax event="rowEditCancel" listener="#{estudoBean.onCancel}" update=":form:messages" />
+
+                            <p:column headerText="Id" sortBy="#{estudo.id}" style="text-align: center;">
+                                <h:inputText value="#{estudo.id}" id="idEstudo" size="5" style="border: none; background-color: none;"/>
+                            </p:column>
+
+                            <p:column headerText="Título" sortBy="#{estudo.titulo}">
+                                <h:outputText value="#{estudo.titulo}"/>
+                            </p:column>
+
+                            <p:column headerText="Autor">
+                                <p:dataList value="#{estudo.autores}" var="autor">
+                                    #{autor.ultimoNome}, #{autor.primeiroNome}
+                                </p:dataList>
+                            </p:column>
+
+                            <p:column headerText="Abstract">
+
+                                <h:outputText value="#{estudo.abstractReduzido}"/>
+                                <br></br>    
+                                <p:commandLink onclick="PF('IS#{estudo.id}').show();">
+                                    <h:outputText value=" Ler abstract..." style="text-align: center;"/>
+                                </p:commandLink>
+
+                                <p:dialog header="Informçaões do Estudo" widgetVar="IS#{estudo.id}" 
+                                          height="30%" width="50%" draggable="true"
+                                          resizable="true">
+                                    <b><h:outputText value="ES#{estudo.id}: #{estudo.titulo}" /></b><br />
+                                    <br></br>
+                                    <h:outputText value="#{estudo.abstractText}" />
+                                    <br></br>
+                                    <hr></hr>
+                                    <h:outputLink rel="#{estudo.doi}">
+                                        <h:outputText value="#{estudo.doi}"/>
+                                    </h:outputLink>
+                                </p:dialog>
+                            </p:column>
+
+                            <p:column headerText="Avaliacao">
+                                <h:outputText value="#{estudo.criterio.codigo}"/>
+                            </p:column>
+
+                            <p:column headerText="Opçoes" style="text-align: center;">
+                                <p:commandLink value="Avaliar Estudo " 
+                                               update=":form:tabela_principal :form_avaliacao"
+                                               oncomplete="PF('dialogoAvaliacao').show()"
+                                               immediate="true"
+                                               ajax="true"
+                                               actionListener="#{estudoBean.prepararAvaliacao(estudo)}">
+
+                                </p:commandLink>
+                            </p:column>
+
+
+
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
